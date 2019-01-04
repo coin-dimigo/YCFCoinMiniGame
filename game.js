@@ -146,11 +146,15 @@ function initGame() {
                             let mob = cc.Sprite.create(resources.mob);
                             mob.setPosition( (minX+ BLOCK_WIDTH*(MAX_BLOCK_NUM_X/2-4) ) , (minY+ BLOCK_WIDTH*(MAX_BLOCK_NUM_Y/2-4) ) );
                             mob.setScale(0.3);
-
-                            let labelMob = cc.LabelTTF.create("mob", "Arial", 30);
-                            labelMob.setColor(0);
-                            labelMob.setPosition(80, 150);
-                            mob.addChild(labelMob, 1);
+                            mob.runAction( cc.RepeatForever.create(cc.Sequence.create( 
+                                cc.DelayTime.create(Math.floor(Math.random()*24)+17),
+                                cc.ScaleTo.create(3, Math.floor(Math.random()*24+17)/40),
+                                cc.DelayTime.create(Math.floor(Math.random()*5)+2),
+                                cc.ScaleTo.create(0.5, 0.3)) ));
+                            // let labelMob = cc.LabelTTF.create("mob", "Arial", 30);
+                            // labelMob.setColor(0);
+                            // labelMob.setPosition(80, 150);
+                            // mob.addChild(labelMob, 1);
                             this.addChild(mob, 1);
                             let indexT = gameMobs.length;
                             gameMobs[indexT] = mob;
@@ -430,7 +434,7 @@ function initGame() {
                             arrowLayer[tindex] = cc.Sprite.create(resources.arrow);
                             arrowLayer[tindex].ignoreAnchorPointForPosition(false);
                             arrowLayer[tindex].setPosition(xx, yy);
-                            arrowLayer[tindex].setScale(0.8);
+                            arrowLayer[tindex].setScale(0.6);
 
                             this.addChild(arrowLayer[tindex], 2);
                             
@@ -441,14 +445,14 @@ function initGame() {
                                 delete arrowLayer[tindex];
                             }
 
-                            setTimeout( deleteLayerFrom, 4000+Math.floor(Math.random()*3000));
+                            setTimeout( deleteLayerFrom, 2700+Math.floor(Math.random()*3000));
 
                         }
 
                         //createRandomMob();
-                        setInterval( createRandomMob, 6500 );
-                        setInterval( createRandomBlock, 2300);
-                        setInterval( createRandomArrow, 970);
+                        setInterval( createRandomMob, 4100 );
+                        setInterval( createRandomBlock, 1900);
+                        setInterval( createRandomArrow, 1800);
 
                         this.scheduleUpdate();
                     },
@@ -592,6 +596,9 @@ function initGame() {
                                 newlayer.setPosition(pos.x, pos.y);
                                 newlayer.setScale(0.8);
                                 this.addChild(newlayer,3);
+                                newlayer.runAction( cc.RepeatForever.create(cc.Sequence.create( cc.ScaleTo.create(0.5, 0.8), cc.ScaleTo.create(0.5, 0.45)) ));
+                                newlayer.runAction( cc.RepeatForever.create(cc.Sequence.create( cc.RotateBy.create(0.3, 360) )));
+
 
                                 arrowLayer[i].removeFromParent(  );
                                 delete arrowLayer[i];
