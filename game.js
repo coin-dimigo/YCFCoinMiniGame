@@ -135,7 +135,7 @@ function initGame() {
 
                         var createRandomMob = () => {
                             let mob = cc.Sprite.create(resources.mob);
-                            mob.setPosition(size.width / 2 - 35, size.height / 2);
+                            mob.setPosition( (size.width/2+minX)/2 , (size.height/2+minY)/2);
                             mob.setScale(0.18);
 
                             let labelMob = cc.LabelTTF.create("mob", "Arial", 30);
