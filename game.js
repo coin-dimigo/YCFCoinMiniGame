@@ -413,7 +413,7 @@ function initGame() {
                         }
 
                         if( cc.rectIntersectsRect(rect1, aimObj.getBoundingBox())){
-                            alert("[CLEAR] P1 get to aim");
+                            alert("[CLEAR]");
                             player1.setPosition(size.width/2, size.height/2);
                         }
 
