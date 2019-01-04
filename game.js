@@ -30,7 +30,7 @@ function initGame() {
 
                 const minX = size.width / 2 - MAX_BLOCK_NUM_X / 2 * BLOCK_WIDTH;
                 const maxX = size.width / 2 + (MAX_BLOCK_NUM_X / 2 - 1) * BLOCK_WIDTH;
-                const minY = size.height / 2 - MAX_BLOCK_NUM_X / 2 * BLOCK_HEIGHT;
+                const minY = size.height / 2 - MAX_BLOCK_NUM_Y / 2 * BLOCK_HEIGHT;
                 const maxY = size.height / 2 + (MAX_BLOCK_NUM_X / 2 - 1) * BLOCK_HEIGHT;
 
 
@@ -41,6 +41,7 @@ function initGame() {
 
                 var availableToCreateX = (new Array(MAX_BLOCK_NUM_X)).fill(false);
                 var availableToCreateY = (new Array(MAX_BLOCK_NUM_X)).fill(false);
+                var tmpRect;
                 var blocks = new Array();
                 var aimPos;
                 var aimObj;
@@ -95,15 +96,15 @@ function initGame() {
                         player2.setScale(0.3);
                         this.addChild(player2, 1);
 
-                        var labelPlayer1 = cc.LabelTTF.create("Player1", "Arial", 30);
-                        labelPlayer1.setColor(0);
-                        labelPlayer1.setPosition(70, 150);
-                        player1.addChild(labelPlayer1, 1);
+                        // var labelPlayer1 = cc.LabelTTF.create("Player1", "Arial", 30);
+                        // labelPlayer1.setColor(0);
+                        // labelPlayer1.setPosition(70, 150);
+                        // player1.addChild(labelPlayer1, 1);
 
-                        var labelPlayer2 = cc.LabelTTF.create("Player2", "Arial", 30);
-                        labelPlayer2.setColor(0);
-                        labelPlayer2.setPosition(70, 150);
-                        player2.addChild(labelPlayer2, 1);
+                        // var labelPlayer2 = cc.LabelTTF.create("Player2", "Arial", 30);
+                        // labelPlayer2.setColor(0);
+                        // labelPlayer2.setPosition(70, 150);
+                        // player2.addChild(labelPlayer2, 1);
                                 
                         let aimStd = [
                             {
@@ -123,10 +124,17 @@ function initGame() {
                                 y: MAX_BLOCK_NUM_Y-4
                             }
                         ]
+
+                        tmpRect = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH*(MAX_BLOCK_NUM_X-5), BLOCK_HEIGHT*(MAX_BLOCK_NUM_Y-5)); //2~MAX_BLOCK_NUM_X-2
+                        tmpRect.ignoreAnchorPointForPosition(false);
+                        tmpRect.setPosition(minX + (MAX_BLOCK_NUM_X-1)*BLOCK_WIDTH/2, minY + (MAX_BLOCK_NUM_Y-1)*BLOCK_HEIGHT/2);
+
                         // aimPos = {x: 5, y: 5};
                         aimPos = aimStd[ Math.ceil(Math.random() * 40 )%aimStd.length ];
                         let aimX = aimPos.x * BLOCK_WIDTH + minX ;
                         let aimY = aimPos.y * BLOCK_HEIGHT+ minY ;
+
+                        
 
                         aimObj = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH*2, BLOCK_HEIGHT*2);
                         aimObj.ignoreAnchorPointForPosition(false);
@@ -426,7 +434,7 @@ function initGame() {
                         let XX = Math.round( (spriteX-minX) / BLOCK_WIDTH);
                         let YY = Math.round( (spriteY-minY) / BLOCK_HEIGHT);
 
-                        sprite_action = cc.MoveBy.create(0.1, cc.p(speedX1 * SPEED, speedY1 * SPEED));
+                        sprite_action = cc.MoveBy.create(0, cc.p(speedX1 * SPEED, speedY1 * SPEED));
                         player1.runAction(sprite_action);
                     },
                     moveP2: function () {
@@ -435,42 +443,39 @@ function initGame() {
 
                         let XX = Math.round( (spriteX-minX)/BLOCK_WIDTH );
                         let YY = Math.round( (spriteY-minY)/BLOCK_HEIGHT);
-                        let ok_ = true;
-
-
-
-                        
-
                         
                         let rect1 = player2.getBoundingBox();
-                        /*
-                        for (let i = 0; i < MAX_BLOCK_NUM_X; i++) {
-                            for (let j = 0; j < MAX_BLOCK_NUM_Y; j++) {
-                                if (gameMap[i][j] == 4) {
-                                    rect2 = gameLayer2[i][j].getBoundingBox();
-                                    if (cc.rectIntersectsRect(rect1, rect2)) {
-                                        ok_ = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        */
-                        // var tmpRect = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH*(MAX_BLOCK_NUM_X-4), BLOCK_HEIGHT*(MAX_BLOCK_NUM_Y-4));
-                        // tmpRect.ignoreAnchorPointForPosition(false);
-                        // tmpRect.setPosition(minX + MAX_BLOCK_NUM_X*BLOCK_WIDTH/2, pos.y + MAX_BLOCK_NUM_Y*BLOCK_HEIGHT/2);
-                        // if( cc.rectIntersectsRect( rect1,tmpRect.getBoundingBox() )){
-                        //     console.log(`[OUT] [${XX}, ${YY}]`);
-                        //     return;
-                        // }
-                        //this.addChild(tmpRect);
                         
-                        if( !( ( XX < 2 || XX >= MAX_BLOCK_NUM_X-2 ) && ( YY < 2 || YY >= MAX_BLOCK_NUM_Y-2 ) ) ) {
+                        if( cc.rectIntersectsRect( rect1,tmpRect.getBoundingBox() ) ){ //가운데서 밀기 
+                            let centerX = minX + (MAX_BLOCK_NUM_X-1)*BLOCK_WIDTH/2;
+                            let centerY = minY + (MAX_BLOCK_NUM_Y-1)*BLOCK_HEIGHT/2;
+                            
+                            XX = (spriteX-centerX)*1.03 + centerX;
+                            YY = (spriteY-centerY)*1.03 + centerY;
+
+                            sprite_action = cc.MoveTo.create(0, cc.p(XX,YY));
+                            player2.runAction(sprite_action);
+
                             console.log(`[OUT] [${XX}, ${YY}]`);
                             return;
                         }
+
+                        if( spriteX<minX || spriteX>maxX || spriteY<minY || spriteY>maxY ){
+                            let centerX = minX + (MAX_BLOCK_NUM_X-1)*BLOCK_WIDTH/2;
+                            let centerY = minY + (MAX_BLOCK_NUM_Y-1)*BLOCK_HEIGHT/2;
+                            
+                            XX = (spriteX-centerX)*0.97 + centerX;
+                            YY = (spriteY-centerY)*0.97 + centerY;
+
+                            sprite_action = cc.MoveTo.create(0, cc.p(XX,YY));
+                            player2.runAction(sprite_action);
+
+                            console.log(`[OUT] [${XX}, ${YY}]`);
+                            return;
+                        }
+                        //console.log(`[move] [${spriteX}, ${spriteY}] min[${minX}, ${minY}] max[${maxX}, ${maxY}]`)
                         
-                        sprite_action = cc.MoveBy.create(0.1, cc.p(speedX2 * SPEED, speedY2 * SPEED));
+                        sprite_action = cc.MoveBy.create(0, cc.p(speedX2 * SPEED, speedY2 * SPEED));
                         player2.runAction(sprite_action);
                         
                         for( let i=0; i<blocks.length; i++){
@@ -535,11 +540,11 @@ function initGame() {
 
 
                                 //DELETE CODE
-                                // console.log(`[move] block from [${minX+ax*BLOCK_WIDTH}, ${minY+ay*BLOCK_HEIGHT}] -> to [${minX+bx*BLOCK_WIDTH}, ${minY+by*BLOCK_HEIGHT}]`);
+                                console.log(`[move] block from [${minX+ax*BLOCK_WIDTH}, ${minY+ay*BLOCK_HEIGHT}] -> to [${minX+bx*BLOCK_WIDTH}, ${minY+by*BLOCK_HEIGHT}]`);
                                 blocks[i].removeFromParent();
                                 gameMap[ax][ay] = 0;
                                 delete blocks[i];
-                                // console.log("[delete] block")
+                                console.log("[delete] block")
 
                                 break;
                             }
