@@ -205,7 +205,8 @@ function initGame() {
                                 ok_s= true;
                                 switch( Math.floor(Math.random()*100)%2 ){
                                     case 0:
-                                    xx = Math.round(Math.random()*MAX_BLOCK_NUM_X)%(mmab - mmaa ) + mmaa;
+                                    //xx = Math.round(Math.random()*MAX_BLOCK_NUM_X)%(mmab - mmaa ) + mmaa;
+                                    xx = Math.round( (player1.getPosition().x - minX)/BLOCK_WIDTH );
                                     for( let i=MMin(originX, xx); i<=MMax(originX, xx); i++ ){
                                         if( gameMap[i][originY]!=1 )  {
                                             ok_s = false;
@@ -215,7 +216,8 @@ function initGame() {
                                     break;
 
                                     case 1:
-                                    yy = Math.round(Math.random()*MAX_BLOCK_NUM_Y)%(mmbb - mmba ) + mmba;
+                                    // yy = Math.round(Math.random()*MAX_BLOCK_NUM_Y)%(mmbb - mmba ) + mmba;
+                                    yy = Math.round( (player1.getPosition().y - minY)/BLOCK_HEIGHT );
                                     for( let i=MMin(originY, yy); i<=MMax(originY, yy); i++ ){
                                         if( gameMap[originX][i]!=1 )  {
                                             ok_s = false;
@@ -445,7 +447,7 @@ function initGame() {
                                 delete arrowLayer[tindex];
                             }
 
-                            setTimeout( deleteLayerFrom, 2700+Math.floor(Math.random()*3000));
+                            setTimeout( deleteLayerFrom, 3700+Math.floor(Math.random()*3000));
 
                         }
 
