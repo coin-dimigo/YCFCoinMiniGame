@@ -3,7 +3,7 @@ function initGame() {
         mob: "res/mob.png",
         player1: "res/player1.png",
         player2: "res/player2.png",
-        arrow: "res/arrow.png"
+        arrow: "res/att.png"
     }
 
     cc.game.onStart = function () {
@@ -23,7 +23,7 @@ function initGame() {
                 //const MAX_BLOCK_NUM_Y = Math.ceil(size.height / BLOCK_HEIGHT);
                 const MAX_BLOCK_NUM_X = 20;
                 const MAX_BLOCK_NUM_Y = 20;
-                const MAX_MONSTER_NUMBER = 5;
+                const MAX_ARROW_NUMBER = 14;
                 const SPEEDBYLEN = 5;
                 const SPEEDBYLENMOB = 80;
                 const STOP_TIME_DELAY = 90;
@@ -36,8 +36,9 @@ function initGame() {
 
                 var gameMap = new Array(MAX_BLOCK_NUM_X);
                 var gameLayers = new Array(MAX_BLOCK_NUM_X);
-                var gameMobs = new Array(MAX_MONSTER_NUMBER);
+                var gameMobs = new Array();
                 var gameLayer2 = new Array(MAX_BLOCK_NUM_X);
+                var arrowLayer = new Array();
 
                 var availableToCreateX = (new Array(MAX_BLOCK_NUM_X)).fill(false);
                 var availableToCreateY = (new Array(MAX_BLOCK_NUM_X)).fill(false);
@@ -351,9 +352,103 @@ function initGame() {
                             setTimeout( deleteLayerFrom, 8000+Math.floor(Math.random()*3000));
 
                         }
-                        createRandomMob();
+
+                        var createRandomArrow = () => {
+                            //if( arrowLayer.length >= MAX_ARROW_NUMBER ) return;
+                            let x = 2;
+                            let y = 2;
+                            let mma, mmb;
+                            let pA, pB, pC, pD;
+                            pA = pB = pC = pD = 10;
+                            if( aimPos.x == aimStd[0].x || aimPos.x == aimStd[2].x ){ // left
+                                pD += 30;
+                            }
+                            if( aimPos.x == aimStd[1].x || aimPos.x == aimStd[3].x ){ // right
+                                pC += 30;
+                            }
+                            if( aimPos.y == aimStd[0].y || aimPos.y == aimStd[1].y ){ // bottom
+                                pB += 30;
+                            }
+                            if( aimPos.y == aimStd[2].y || aimPos.y == aimStd[3].y ){ // top
+                                pA += 30;
+                            }
+
+                            let pP = parseInt(Math.random() * 300 % (pA+pB+pC+pD) );
+                            
+                            if( pP < pA){ // TOP, select X
+                                y = MAX_BLOCK_NUM_Y - 3;
+                            }
+                            if( pP < pB+pA ){ // Bottom, Select X
+                                for (let i = 0; i < MAX_BLOCK_NUM_X; i++) {
+                                    if (availableToCreateX[i]) {
+                                        mma = i;
+                                        break;
+                                    }
+                                }
+                                for (let i = mma; i < MAX_BLOCK_NUM_X; i++) {
+                                    if (!availableToCreateX[i]) {
+                                        mmb = i-1;
+                                        break;
+                                    }
+                                }
+                                x = Math.round(Math.random() * (mmb - mma) + mma);
+                                if (!availableToCreateX[x] || gameMap[x][y] != 0) {
+                                    console.log(`[make arrow] return [${x}, ${y}]`);
+                                    return setTimeout(this.createRandomArrow, 30);
+                                }
+                            }
+                            
+                            else{
+                                if( pP < pA+pB+pC ){ //RIGHT, Select Y
+                                    x = MAX_BLOCK_NUM_X - 3;
+                                }
+                                for (let i = 0; i < MAX_BLOCK_NUM_Y; i++) { // left, Select Y
+                                    if (availableToCreateY[i]) {
+                                        mma = i;
+                                        break;
+                                    }
+                                }
+                                for (let i = mma; i < MAX_BLOCK_NUM_Y; i++) {
+                                    if (!availableToCreateY[i]) {
+                                        mmb = i-1;
+                                        break;
+                                    }
+                                }
+                                y = Math.round(Math.random() * (mmb - mma) + mma);
+                                if (!availableToCreateX[y] || gameMap[x][y] != 0) {
+                                    console.log(`[make arrow] return [${x}, ${y}]`);
+                                    return setTimeout(this.createRandomArrow, 30);
+                                }
+                            }
+
+                            let xx = x * BLOCK_WIDTH + minX;
+                            let yy = y * BLOCK_HEIGHT + minY;
+                            let tindex = arrowLayer.length;
+                            gameMap[x][y] = 3; //ARROW,
+                            console.log(`[make arrow] [${x}, ${y}]`);
+
+                            arrowLayer[tindex] = cc.Sprite.create(resources.arrow);
+                            arrowLayer[tindex].ignoreAnchorPointForPosition(false);
+                            arrowLayer[tindex].setPosition(xx, yy);
+                            arrowLayer[tindex].setScale(0.8);
+
+                            this.addChild(arrowLayer[tindex], 2);
+                            
+                            var deleteLayerFrom = ( )=>{
+                                if( !arrowLayer[tindex] ) return console.log("[delete] This arrow has been destroyed")
+                                arrowLayer[tindex].removeFromParent();
+                                gameMap[x][y] = 0;
+                                delete arrowLayer[tindex];
+                            }
+
+                            setTimeout( deleteLayerFrom, 4000+Math.floor(Math.random()*3000));
+
+                        }
+
+                        //createRandomMob();
                         setInterval( createRandomMob, 6500 );
                         setInterval( createRandomBlock, 2300);
+                        setInterval( createRandomArrow, 970);
 
                         this.scheduleUpdate();
                     },
@@ -422,6 +517,8 @@ function initGame() {
                         
                         if( cc.rectIntersectsRect(rect1, aimObj.getBoundingBox())){
                             alert("[ C L E A R ]");
+                            speedX1=speedX2=speedY1=speedY2=0;
+                            keyboards.numLeft = keyboards.numTop = keyboards.numDown = keyboards.numRight = keyboards.W = keyboards.A = keyboards.S = keyboards.D = keyboards.Space = false;
                             player1.setPosition(size.width/2, size.height/2);
                         }
 
@@ -434,7 +531,7 @@ function initGame() {
                         let XX = Math.round( (spriteX-minX) / BLOCK_WIDTH);
                         let YY = Math.round( (spriteY-minY) / BLOCK_HEIGHT);
 
-                        sprite_action = cc.MoveBy.create(0, cc.p(speedX1 * SPEED, speedY1 * SPEED));
+                        sprite_action = cc.MoveBy.create(0.2, cc.p(speedX1 * SPEED, speedY1 * SPEED));
                         player1.runAction(sprite_action);
                     },
                     moveP2: function () {
@@ -450,10 +547,10 @@ function initGame() {
                             let centerX = minX + (MAX_BLOCK_NUM_X-1)*BLOCK_WIDTH/2;
                             let centerY = minY + (MAX_BLOCK_NUM_Y-1)*BLOCK_HEIGHT/2;
                             
-                            XX = (spriteX-centerX)*1.03 + centerX;
-                            YY = (spriteY-centerY)*1.03 + centerY;
+                            XX = (spriteX-centerX)*1.021 + centerX;
+                            YY = (spriteY-centerY)*1.021 + centerY;
 
-                            sprite_action = cc.MoveTo.create(0, cc.p(XX,YY));
+                            sprite_action = cc.MoveTo.create(0.2, cc.p(XX,YY));
                             player2.runAction(sprite_action);
 
                             console.log(`[OUT] [${XX}, ${YY}]`);
@@ -464,8 +561,8 @@ function initGame() {
                             let centerX = minX + (MAX_BLOCK_NUM_X-1)*BLOCK_WIDTH/2;
                             let centerY = minY + (MAX_BLOCK_NUM_Y-1)*BLOCK_HEIGHT/2;
                             
-                            XX = (spriteX-centerX)*0.97 + centerX;
-                            YY = (spriteY-centerY)*0.97 + centerY;
+                            XX = (spriteX-centerX)*0.979 + centerX;
+                            YY = (spriteY-centerY)*0.979 + centerY;
 
                             sprite_action = cc.MoveTo.create(0, cc.p(XX,YY));
                             player2.runAction(sprite_action);
@@ -478,6 +575,80 @@ function initGame() {
                         sprite_action = cc.MoveBy.create(0, cc.p(speedX2 * SPEED, speedY2 * SPEED));
                         player2.runAction(sprite_action);
                         
+                        for( let i=0; i<arrowLayer.length; i++){
+                            if( !arrowLayer[i] ) continue;
+                            rect2 = arrowLayer[i].getBoundingBox();
+                            if( cc.rectIntersectsRect(rect1, rect2)){
+
+                                let pos = arrowLayer[i].getPosition();
+                                let ax = Math.round( (pos.x - minX ) / BLOCK_WIDTH );
+                                let ay = Math.round( (pos.y - minY ) / BLOCK_HEIGHT );
+                                let dx=0, dy=0;
+
+                                //Moving
+
+                                let newlayer = cc.Sprite.create(resources.arrow);
+                                newlayer.ignoreAnchorPointForPosition(false);
+                                newlayer.setPosition(pos.x, pos.y);
+                                newlayer.setScale(0.8);
+                                this.addChild(newlayer,3);
+
+                                arrowLayer[i].removeFromParent(  );
+                                delete arrowLayer[i];
+                                gameMap[ ax ][ ay ] = 0;
+
+                                if( ax == MAX_BLOCK_NUM_X-3){ // X (-) 
+                                    dx = -1;
+                                }
+                                else if( ax == 2 ){ // X(+)
+                                    dx = 1;
+                                }
+
+                                else if( ay == MAX_BLOCK_NUM_Y-3){ // Y (-) 
+                                    dy = -1;
+                                }
+                                else if( ay == 2 ){ // Y (+)
+                                    dy = 1;
+                                }
+
+                                let timem = 1/SPEEDBYLEN ;
+
+                                let moveArrow = ()=>{
+                                    
+                                    newlayer.runAction(cc.MoveBy.create( timem, cc.p(dx*BLOCK_WIDTH, dy*BLOCK_HEIGHT) ));
+                                    let rect1= newlayer.getBoundingBox();
+                                    console.log(`[move] arrow from [${minX+ax*BLOCK_WIDTH}, ${minY+ay*BLOCK_HEIGHT}]`);
+                                    for( let i=0; i<gameMobs.length; i++){
+                                        if( !gameMobs[i]) continue;
+                                        if( cc.rectIntersectsRect(rect1, gameMobs[i].getBoundingBox())){
+                                            gameMobs[i].removeFromParent();
+                                            delete gameMobs[i];
+                                            console.log(`[delete] mob`);
+                                        }
+                                    }
+                                }
+
+                                let prog = ()=>{
+                                    let i;
+                                    
+                                    for( i=0; i< (dx?MAX_BLOCK_NUM_X:MAX_BLOCK_NUM_Y); i++){
+                                        setTimeout( moveArrow, i*timem*1000);
+                                    }
+                                    setTimeout( deleteLayer2, i*timem*1000);
+                                }
+
+                                let deleteLayer2 = ()=>{
+                                    //DELETE CODE
+                                    newlayer.removeFromParent();
+                                    console.log("[delete] arrow")
+                                }
+
+                                setTimeout(prog,0);
+
+                                break;
+                            }
+                        }//arrow 밀기
+
                         for( let i=0; i<blocks.length; i++){
                             if( !blocks[i] ) continue;
                             rect2 = blocks[i].getBoundingBox();
