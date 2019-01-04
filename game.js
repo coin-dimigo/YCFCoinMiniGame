@@ -17,15 +17,15 @@ function initGame() {
             ],
             function () {
                 var size = cc.director.getWinSize();
-                const BLOCK_WIDTH = 30;
-                const BLOCK_HEIGHT = 30;
-                // const MAX_BLOCK_NUM_X = Math.ceil(size.width / BLOCK_WIDTH);
-                // const MAX_BLOCK_NUM_Y = Math.ceil(size.height / BLOCK_HEIGHT);
-                const MAX_BLOCK_NUM_X = 30;
-                const MAX_BLOCK_NUM_Y = 30;
+                const BLOCK_WIDTH = 60;
+                const BLOCK_HEIGHT = 60;
+                //const MAX_BLOCK_NUM_X = Math.ceil(size.width / BLOCK_WIDTH);
+                //const MAX_BLOCK_NUM_Y = Math.ceil(size.height / BLOCK_HEIGHT);
+                const MAX_BLOCK_NUM_X = 20;
+                const MAX_BLOCK_NUM_Y = 20;
                 const MAX_MONSTER_NUMBER = 5;
                 const SPEEDBYLEN = 5;
-                const SPEEDBYLENMOB = 8;
+                const SPEEDBYLENMOB = 0.4;
                 const STOP_TIME_DELAY = 700;
 
                 const minX = size.width / 2 - MAX_BLOCK_NUM_X / 2 * BLOCK_WIDTH;
@@ -38,6 +38,7 @@ function initGame() {
                 var gameLayers = new Array(MAX_BLOCK_NUM_X);
                 var gameMobs = new Array(MAX_MONSTER_NUMBER);
                 var gameLayer2 = new Array(MAX_BLOCK_NUM_X);
+
                 var availableToCreateX = (new Array(MAX_BLOCK_NUM_X)).fill(false);
                 var availableToCreateY = (new Array(MAX_BLOCK_NUM_X)).fill(false);
                 var blocks = new Array();
@@ -65,26 +66,25 @@ function initGame() {
                         this._super();
                         isInited = true;
                         
-                        for (let i = minX, i2 = 0; i2 < MAX_BLOCK_NUM_X; i += BLOCK_WIDTH, i2++) {
-                            for (let j = minY, j2 = 0; j2 < MAX_BLOCK_NUM_Y; j += BLOCK_HEIGHT, j2++) {
+                        for (let i2 = 0; i2 < MAX_BLOCK_NUM_X; i2++) {
+                            for (let j2 = 0; j2 < MAX_BLOCK_NUM_Y; j2++) {
                                 if (gameMap[i2][j2] == 1) { //ACTIVE BLOCK
                                     let layer = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH, BLOCK_HEIGHT);
                                     layer.ignoreAnchorPointForPosition(false);
-                                    layer.setPosition(i, j);
+                                    layer.setPosition(minX+i2*BLOCK_WIDTH, minY+j2*BLOCK_HEIGHT);
                                     this.addChild(layer, 0);
                                     gameLayers[i2][j2] = layer;
                                 }
                                 if (gameMap[i2][j2] == 4) { // EDGE
                                     let layer = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH, BLOCK_HEIGHT);
                                     layer.ignoreAnchorPointForPosition(false);
-                                    layer.setPosition(i, j);
+                                    layer.setPosition(minX+i2*BLOCK_WIDTH, minY+j2*BLOCK_HEIGHT);
                                     this.addChild(layer, 0);
                                     gameLayer2[i2][j2] = layer;
                                 }
                             }
                         }
                         
-
                         player1 = cc.Sprite.create(resources.player1);
                         player1.setPosition(size.width / 2, size.height / 2);
                         player1.setScale(0.3);
@@ -107,20 +107,20 @@ function initGame() {
                                 
                         let aimStd = [
                             {
-                                x: 6,
-                                y: 6
+                                x: 3,
+                                y: 3
                             },
                             {
-                                x: MAX_BLOCK_NUM_X-7, 
-                                y: 6
+                                x: MAX_BLOCK_NUM_X-4, 
+                                y: 3
                             },
                             {
-                                x: 6,
-                                y: MAX_BLOCK_NUM_Y-7
+                                x: 3,
+                                y: MAX_BLOCK_NUM_Y-4
                             },
                             {
-                                x: MAX_BLOCK_NUM_X-7, 
-                                y: MAX_BLOCK_NUM_Y-7
+                                x: MAX_BLOCK_NUM_X-4, 
+                                y: MAX_BLOCK_NUM_Y-4
                             }
                         ]
                         // aimPos = {x: 5, y: 5};
@@ -128,7 +128,7 @@ function initGame() {
                         let aimX = aimPos.x * BLOCK_WIDTH + minX ;
                         let aimY = aimPos.y * BLOCK_HEIGHT+ minY ;
 
-                        aimObj = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH*3, BLOCK_HEIGHT*3);
+                        aimObj = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH*2, BLOCK_HEIGHT*2);
                         aimObj.ignoreAnchorPointForPosition(false);
                         aimObj.setPosition( aimX, aimY );
                         this.addChild( aimObj, 1 );
@@ -344,7 +344,7 @@ function initGame() {
 
                         }
                         createRandomMob();
-                        setInterval( createRandomMob, 21000 );
+                        setInterval( createRandomMob, 9800 );
                         setInterval( createRandomBlock, 2300);
 
                         this.scheduleUpdate();
