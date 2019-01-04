@@ -26,7 +26,7 @@ function initGame() {
                 const MAX_MONSTER_NUMBER = 5;
                 const SPEEDBYLEN = 5;
                 const SPEEDBYLENMOB = 80;
-                const STOP_TIME_DELAY = 700;
+                const STOP_TIME_DELAY = 90;
 
                 const minX = size.width / 2 - MAX_BLOCK_NUM_X / 2 * BLOCK_WIDTH;
                 const maxX = size.width / 2 + (MAX_BLOCK_NUM_X / 2 - 1) * BLOCK_WIDTH;
@@ -211,7 +211,7 @@ function initGame() {
                                     }
                                     break;
                                 }
-                                if( ok_s ) {
+                                if( ok_s && gameMap[xx][yy]==1 ) {
                                     console.log(`[GET] location : [${xx*BLOCK_WIDTH+minX}, ${yy*BLOCK_HEIGHT+minY}]`);
                                     console.log(`from[${originX}, ${originY}] -> to[${xx}, ${yy}] [${ok_s?"true":"false"}] `)
                                     return {
@@ -380,12 +380,43 @@ function initGame() {
                         for( let i=0; i<gameMobs.length; i++ ){
                             if( !gameMobs[i] ) continue;
                             if( cc.rectIntersectsRect(rect1, gameMobs[i].getBoundingBox())){ //collide
-                                alert("[Crash!]");
+                                console.log("[Crash!]");
                                 // 체력 감소?
                                 gameMobs[i].removeFromParent();
                                 delete gameMobs[i];
                             }
                         }
+
+                        
+                        let ok_ = false;
+                        for (let i = 0; i < MAX_BLOCK_NUM_X; i++) {
+                            for (let j = 0; j < MAX_BLOCK_NUM_Y; j++) {
+                                if (gameMap[i][j] == 1) {
+                                    if (cc.rectIntersectsRect(rect1, gameLayers[i][j].getBoundingBox())) {
+                                        ok_ = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (!ok_) {
+                            let spriteX = player1.getPosition().x + speedX1 * SPEED;
+                            let spriteY = player1.getPosition().y + speedY1 * SPEED;
+    
+                            let XX = Math.round( (spriteX-minX) / BLOCK_WIDTH);
+                            let YY = Math.round( (spriteY-minY) / BLOCK_HEIGHT);
+
+                            player1.setPosition(size.width / 2, size.height / 2);
+                            console.log(`[PLAYER1] move out from map [${XX}, ${YY}]`);
+                        }
+
+                        
+                        if( cc.rectIntersectsRect(rect1, aimObj.getBoundingBox())){
+                            alert("[ C L E A R ]");
+                            player1.setPosition(size.width/2, size.height/2);
+                        }
+
 
                     },
                     moveP1: function () {
@@ -397,30 +428,6 @@ function initGame() {
 
                         sprite_action = cc.MoveBy.create(0.1, cc.p(speedX1 * SPEED, speedY1 * SPEED));
                         player1.runAction(sprite_action);
-
-                        let ok_ = false;
-                        let rect1 = player1.getBoundingBox();
-                        for (let i = 0; i < MAX_BLOCK_NUM_X; i++) {
-                            for (let j = 0; j < MAX_BLOCK_NUM_Y; j++) {
-                                if (gameMap[i][j] == 1) {
-                                    rect2 = gameLayers[i][j].getBoundingBox();
-                                    if (cc.rectIntersectsRect(rect1, rect2)) {
-                                        ok_ = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
-                        if( cc.rectIntersectsRect(rect1, aimObj.getBoundingBox())){
-                            alert("[ C L E A R ]");
-                            player1.setPosition(size.width/2, size.height/2);
-                        }
-
-                        if (!ok_) {
-                            player1.setPosition(size.width / 2, size.height / 2);
-                            console.log(`[PLAYER1] move out from map [${XX}, ${YY}]`);
-                        }
                     },
                     moveP2: function () {
                         let spriteX = player2.getPosition().x + speedX2 * SPEED;
@@ -428,12 +435,15 @@ function initGame() {
 
                         let XX = Math.round( (spriteX-minX)/BLOCK_WIDTH );
                         let YY = Math.round( (spriteY-minY)/BLOCK_HEIGHT);
+                        let ok_ = true;
 
-                        sprite_action = cc.MoveBy.create(0.1, cc.p(speedX2 * SPEED, speedY2 * SPEED));
-                        player2.runAction(sprite_action);
 
-                        let ok_ = false;
+
+                        
+
+                        
                         let rect1 = player2.getBoundingBox();
+                        /*
                         for (let i = 0; i < MAX_BLOCK_NUM_X; i++) {
                             for (let j = 0; j < MAX_BLOCK_NUM_Y; j++) {
                                 if (gameMap[i][j] == 4) {
@@ -445,6 +455,24 @@ function initGame() {
                                 }
                             }
                         }
+                        */
+                        // var tmpRect = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH*(MAX_BLOCK_NUM_X-4), BLOCK_HEIGHT*(MAX_BLOCK_NUM_Y-4));
+                        // tmpRect.ignoreAnchorPointForPosition(false);
+                        // tmpRect.setPosition(minX + MAX_BLOCK_NUM_X*BLOCK_WIDTH/2, pos.y + MAX_BLOCK_NUM_Y*BLOCK_HEIGHT/2);
+                        // if( cc.rectIntersectsRect( rect1,tmpRect.getBoundingBox() )){
+                        //     console.log(`[OUT] [${XX}, ${YY}]`);
+                        //     return;
+                        // }
+                        //this.addChild(tmpRect);
+                        
+                        if( !( ( XX < 2 || XX >= MAX_BLOCK_NUM_X-2 ) && ( YY < 2 || YY >= MAX_BLOCK_NUM_Y-2 ) ) ) {
+                            console.log(`[OUT] [${XX}, ${YY}]`);
+                            return;
+                        }
+                        
+                        sprite_action = cc.MoveBy.create(0.1, cc.p(speedX2 * SPEED, speedY2 * SPEED));
+                        player2.runAction(sprite_action);
+                        
                         for( let i=0; i<blocks.length; i++){
                             if( !blocks[i] ) continue;
                             rect2 = blocks[i].getBoundingBox();
@@ -516,11 +544,7 @@ function initGame() {
                                 break;
                             }
                         }//block 밀기
-
-                        if (!ok_) {
-                            player2.setPosition(minX + 20, minY + 20);
-                            console.log(`[PLAYER2] move out from map [${XX}, ${YY}]`);
-                        }
+                        
                     }
 
 
