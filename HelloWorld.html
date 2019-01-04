@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>COIN IN DIMIGO</title>
+    <meta charset="utf-8">
+</head>
+<body>   
+    <canvas id="gameCanvas" width="1600" height="1600"></canvas>
+    <script type="text/javascript" src="cocos2d-js-v3.13.js" charset="UTF-8"></script>
+    <script type="text/javascript" >
+        var keyboards = {
+            numLeft: false,
+            numUp: false,
+            numRight: false,
+            numDown: false,
+            Space: false,
+            W: false,
+            A: false,
+            S: false,
+            D: false,
+        }
+        var speedX1=0, speedY1=0;
+        var speedX2=0, speedY2=0;
+        const SPEED = 4;
+        var player1, player2;
+        var isInited =false;
+        
+    </script>
+    <script type="text/javascript" src="game.js"></script>
+    <script type="text/javascript" src="keyinput.js"></script>
+    <script type="text/javascript">
+        window.onload = function(){
+            initGame();
+            initInput();
+        }
+    </script>
+</body>
+</html>
