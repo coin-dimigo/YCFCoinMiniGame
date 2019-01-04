@@ -25,7 +25,7 @@ function initGame() {
                 const MAX_BLOCK_NUM_Y = 20;
                 const MAX_MONSTER_NUMBER = 5;
                 const SPEEDBYLEN = 5;
-                const SPEEDBYLENMOB = 0.4;
+                const SPEEDBYLENMOB = 80;
                 const STOP_TIME_DELAY = 700;
 
                 const minX = size.width / 2 - MAX_BLOCK_NUM_X / 2 * BLOCK_WIDTH;
@@ -87,7 +87,7 @@ function initGame() {
                         
                         player1 = cc.Sprite.create(resources.player1);
                         player1.setPosition(size.width / 2, size.height / 2);
-                        player1.setScale(0.3);
+                        player1.setScale(0.4);
                         this.addChild(player1, 1);
 
                         player2 = cc.Sprite.create(resources.player2);
@@ -136,7 +136,7 @@ function initGame() {
                         var createRandomMob = () => {
                             let mob = cc.Sprite.create(resources.mob);
                             mob.setPosition( (minX+ BLOCK_WIDTH*(MAX_BLOCK_NUM_X/2-4) ) , (minY+ BLOCK_WIDTH*(MAX_BLOCK_NUM_Y/2-4) ) );
-                            mob.setScale(0.18);
+                            mob.setScale(0.3);
 
                             let labelMob = cc.LabelTTF.create("mob", "Arial", 30);
                             labelMob.setColor(0);
@@ -233,8 +233,8 @@ function initGame() {
                                 let toPos = findPlace();
                                 if( toPos){
                                     let fromPos = monster.getPosition();
-                                    let len = Math.sqrt( Math.pow(fromPos.x - toPos.x, 2 )*Math.pow(fromPos.x - toPos.x, 2 ) , 2 );
-                                    let time_ = len / SPEEDBYLENMOB / 1000 + 1.7;
+                                    let len = Math.sqrt( (fromPos.x - toPos.x)*(fromPos.x - toPos.x)+(fromPos.y - toPos.y)*(fromPos.y - toPos.y) , 2.0 );
+                                    let time_ = len / SPEEDBYLENMOB ;
                                     monster.runAction(new cc.MoveTo.create(time_, cc.p(toPos.x, toPos.y))); //d
                                     console.log(`[move] MOB from [${fromPos.x}, ${fromPos.y}] to [${toPos.x}, ${toPos.y}]`);
                                     console.log( ` - len: [${len}], time: [${time_}]`);
@@ -344,7 +344,7 @@ function initGame() {
 
                         }
                         createRandomMob();
-                        setInterval( createRandomMob, 9800 );
+                        setInterval( createRandomMob, 6500 );
                         setInterval( createRandomBlock, 2300);
 
                         this.scheduleUpdate();
