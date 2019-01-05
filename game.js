@@ -46,6 +46,7 @@ function initGame() {
                 var blocks = new Array();
                 var aimPos;
                 var aimObj;
+                
 
                 for (let i = 0; i < MAX_BLOCK_NUM_X; i++) {
                     gameMap[i] = new Array(MAX_BLOCK_NUM_Y);
@@ -490,6 +491,8 @@ function initGame() {
                             if( !gameMobs[i] ) continue;
                             if( cc.rectIntersectsRect(rect1, gameMobs[i].getBoundingBox())){ //collide
                                 console.log("[Crash!]");
+                                addScore( -100 );
+                                addLife( -1 );
                                 // 체력 감소?
                                 gameMobs[i].removeFromParent();
                                 delete gameMobs[i];
@@ -517,6 +520,7 @@ function initGame() {
                             let YY = Math.round( (spriteY-minY) / BLOCK_HEIGHT);
 
                             player1.setPosition(size.width / 2, size.height / 2);
+                            addScore(-50);
                             console.log(`[PLAYER1] move out from map [${XX}, ${YY}]`);
                         }
 
@@ -631,6 +635,7 @@ function initGame() {
                                         if( !gameMobs[i]) continue;
                                         if( cc.rectIntersectsRect(rect1, gameMobs[i].getBoundingBox())){
                                             gameMobs[i].removeFromParent();
+                                            addScore(100);
                                             delete gameMobs[i];
                                             console.log(`[delete] mob`);
                                         }

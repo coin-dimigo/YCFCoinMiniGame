@@ -3,9 +3,40 @@
 <head>
     <title>COIN IN DIMIGO</title>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css" >
 </head>
 <body>   
-    <canvas id="gameCanvas" width="1500" height="1200"></canvas>
+    <main>
+        <canvas id="gameCanvas" width="1500" height="1200"></canvas>
+        <div id="section">
+            <div class="sect">
+                스코어
+                <p id="score" class="big">000000</p>
+            </div>
+            <div class="sect">
+                생명
+                <p id="life" class="big2">3</p>
+            </div>
+            <div class="sect hor all">
+                <div>
+                    <img src="res/player1.png" alt="Player1">
+                    <p> Player1 </p>
+                </div>
+                <div>
+                    <img src="res/player2.png" alt="Player2">
+                    <p> Player2 </p>
+                </div>
+                <div>
+                    <img src="res/mob.png" alt="Mob">
+                    <p> Monster </p>
+                </div>
+                <div>
+                    <img src="res/att.png" alt="attack">
+                    <p> Weapon </p>
+                </div>
+            </div>
+        </div>
+    </main>
     <script type="text/javascript" src="cocos2d-js-v3.13.js" charset="UTF-8"></script>
     <script type="text/javascript" >
         var keyboards = {
@@ -24,14 +55,21 @@
         const SPEED = 4;
         var player1, player2;
         var isInited =false;
+
+        const MAX_LIFE = 3;
+        var life_ = MAX_LIFE;
+        var SCORE_ = 0;
+        var lastTime_ = new Date();
         
     </script>
     <script type="text/javascript" src="game.js"></script>
     <script type="text/javascript" src="keyinput.js"></script>
+    <script type="text/javascript" src="ui.js"></script>
     <script type="text/javascript">
         window.onload = function(){
             initGame();
             initInput();
+            initUI();
         }
     </script>
 </body>
