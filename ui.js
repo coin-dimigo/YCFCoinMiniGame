@@ -18,7 +18,7 @@ function setMessage(mes){
 
 function tMessage(delt,mes){
     setMessage(mes);
-    if( delt != 0){
+    if( delt != -1){
         setTimeout( ()=>{
             if( mes == a3.innerHTML ){
                 setMessage("[ ]");

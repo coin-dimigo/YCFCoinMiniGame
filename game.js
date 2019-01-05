@@ -138,7 +138,7 @@ function initGame() {
 
                         
 
-                        aimObj = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH*2, BLOCK_HEIGHT*2);
+                        aimObj = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH*3, BLOCK_HEIGHT*3);
                         aimObj.ignoreAnchorPointForPosition(false);
                         aimObj.setPosition( aimX, aimY );
                         this.addChild( aimObj, 1 );
@@ -530,10 +530,10 @@ function initGame() {
                             console.log(`[PLAYER1] move out from map [${XX}, ${YY}]`);
                         }
 
-                        
-                        if( cc.rectIntersectsRect(rect1, aimObj.getBoundingBox())){
+                        let pos = player1.getPosition();
+                        if( Math.abs(pos.x - aimPos.x) < BLOCK_WIDTH/8 && Math.abs(pos.y - aimPos.y) < BLOCK_HEIGHT/8 ){
                             alert("[ C L E A R ]");
-                            tMessage(0, "[ C L E A R ]");
+                            tMessage(-1, "[ C L E A R ]");
                             speedX1=speedX2=speedY1=speedY2=0;
                             keyboards.numLeft = keyboards.numTop = keyboards.numDown = keyboards.numRight = keyboards.W = keyboards.A = keyboards.S = keyboards.D = keyboards.Space = false;
                             player1.setPosition(size.width/2, size.height/2);
