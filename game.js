@@ -138,10 +138,10 @@ function initGame() {
 
                         
 
-                        aimObj = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH*3, BLOCK_HEIGHT*3);
+                        aimObj = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH*2.5, BLOCK_HEIGHT*2.5);
                         aimObj.ignoreAnchorPointForPosition(false);
                         aimObj.setPosition( aimX, aimY );
-                        this.addChild( aimObj, 1 );
+                        this.addChild( aimObj, 0 );
 
                         var createRandomMob = () => {
                             let mob = cc.Sprite.create(resources.mob);
@@ -340,6 +340,11 @@ function initGame() {
                                 }
                             }
 
+                            if( gameMap[x][y]!=0 ){
+                                console.log(`[make block] return [${x}, ${y}]`);
+                                return setTimeout(this.createRandomBlock, 30);
+                            }
+
                             let xx = x * BLOCK_WIDTH + minX;
                             let yy = y * BLOCK_HEIGHT + minY;
                             let tindex = blocks.length;
@@ -498,6 +503,13 @@ function initGame() {
                                 addLife( -1 );
                                 tMessage(2000, "[충돌] : score -100")
                                 // 체력 감소?
+                                player1.runAction( 
+                                    cc.Sequence.create(
+                                        cc.FadeTo.create(0.4, 100),
+                                        cc.DelayTime.create( 0.9 ),
+                                        cc.FadeTo.create(0.4, 255)
+                                    )
+                                );
                                 gameMobs[i].removeFromParent();
                                 delete gameMobs[i];
                                 
@@ -531,7 +543,10 @@ function initGame() {
                         }
 
                         let pos = player1.getPosition();
-                        if( Math.abs(pos.x - aimPos.x) < BLOCK_WIDTH/8 && Math.abs(pos.y - aimPos.y) < BLOCK_HEIGHT/8 ){
+                        let aimX = aimPos.x*BLOCK_WIDTH+minX;
+                        let aimY = aimPos.y*BLOCK_HEIGHT+minY;
+                        //console.log(`[distance] [${Math.abs(pos.x - aimX)}, ${Math.abs(pos.y - aimY)}]`)
+                        if( Math.abs(pos.x - aimX) < BLOCK_WIDTH*3/2 && Math.abs(pos.y - aimY) < BLOCK_HEIGHT*3/2 ){
                             alert("[ C L E A R ]");
                             tMessage(-1, "[ C L E A R ]");
                             speedX1=speedX2=speedY1=speedY2=0;
@@ -679,7 +694,7 @@ function initGame() {
                                 let pos = blocks[i].getPosition();
                                 let ax = Math.round( (pos.x - minX ) / BLOCK_WIDTH );
                                 let ay = Math.round( (pos.y - minY ) / BLOCK_HEIGHT );
-                                let bx, by;
+                                let bx=-1, by=-1;
 
                                 //Moving
                                 let newlayer = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH, BLOCK_HEIGHT);
@@ -724,6 +739,8 @@ function initGame() {
                                         }
                                     }
                                 }
+
+                                if( bx==-1 || by==-1 ) break;
 
                                 let time = Math.sqrt( Math.pow((ax-bx),2.0)*Math.pow((ay-by),2.0), 2.0 )*SPEEDBYLEN + 1.3;
                                 newlayer.runAction(cc.MoveTo.create( time, cc.p(minX+bx*BLOCK_WIDTH, minY+by*BLOCK_HEIGHT) ));
