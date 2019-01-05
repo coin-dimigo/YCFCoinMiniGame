@@ -3,7 +3,10 @@ function initGame() {
         mob: "res/mob.png",
         player1: "res/player1.png",
         player2: "res/player2.png",
-        arrow: "res/att.png"
+        arrow: "res/att.png",
+        block: "res/block.png",
+        block2: "res/block2.png",
+        aim: "res/aim.png"
     }
 
     cc.game.onStart = function () {
@@ -14,6 +17,9 @@ function initGame() {
                 resources.arrow,
                 resources.player1,
                 resources.player2,
+                resources.block,
+                resources.block2,
+                resources.aim
             ],
             function () {
                 var size = cc.director.getWinSize();
@@ -72,14 +78,16 @@ function initGame() {
                         for (let i2 = 0; i2 < MAX_BLOCK_NUM_X; i2++) {
                             for (let j2 = 0; j2 < MAX_BLOCK_NUM_Y; j2++) {
                                 if (gameMap[i2][j2] == 1) { //ACTIVE BLOCK
-                                    let layer = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH, BLOCK_HEIGHT);
+                                    let layer = cc.Sprite.create(resources.block);
+                                    layer.setScale(1.1);
                                     layer.ignoreAnchorPointForPosition(false);
                                     layer.setPosition(minX+i2*BLOCK_WIDTH, minY+j2*BLOCK_HEIGHT);
                                     this.addChild(layer, 0);
                                     gameLayers[i2][j2] = layer;
                                 }
                                 if (gameMap[i2][j2] == 4) { // EDGE
-                                    let layer = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH, BLOCK_HEIGHT);
+                                    let layer = cc.Sprite.create(resources.block2)
+                                    layer.setScale(1.15);
                                     layer.ignoreAnchorPointForPosition(false);
                                     layer.setPosition(minX+i2*BLOCK_WIDTH, minY+j2*BLOCK_HEIGHT);
                                     this.addChild(layer, 0);
@@ -138,7 +146,7 @@ function initGame() {
 
                         
 
-                        aimObj = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH*2.5, BLOCK_HEIGHT*2.5);
+                        aimObj = cc.Sprite.create(resources.aim);
                         aimObj.ignoreAnchorPointForPosition(false);
                         aimObj.setPosition( aimX, aimY );
                         this.addChild( aimObj, 0 );
@@ -351,7 +359,8 @@ function initGame() {
                             gameMap[x][y] = 2; //BEFORE BLOCK,
                             console.log(`[make block] [${x}, ${y}]`);
 
-                            blocks[tindex] = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH, BLOCK_HEIGHT);
+                            blocks[tindex] = cc.Sprite.create(resources.block);
+                            blocks[tindex].setScale(1.1);
                             blocks[tindex].ignoreAnchorPointForPosition(false);
                             blocks[tindex].setPosition(xx, yy);
 
@@ -697,7 +706,8 @@ function initGame() {
                                 let bx=-1, by=-1;
 
                                 //Moving
-                                let newlayer = cc.LayerColor.create(cc.Color(120, 40, 120, 255), BLOCK_WIDTH, BLOCK_HEIGHT);
+                                let newlayer = cc.Sprite.create(resources.block);
+                                newlayer.setScale(1.1)
                                 newlayer.ignoreAnchorPointForPosition(false);
                                 newlayer.setPosition(pos.x, pos.y);
                                 this.addChild(newlayer);
