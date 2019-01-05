@@ -1,4 +1,4 @@
-var a1,a2
+var a1,a2,a3;
 function updateUI(gapTime){
     let str ="";
     let m = 6;
@@ -10,6 +10,23 @@ function updateUI(gapTime){
 
 function updateUI2(){
     a2.innerHTML = ` ${life_>0?life_:"<span style='color: #f00'>You died</span>" } `;
+}
+
+function setMessage(mes){
+    a3.innerHTML = mes;
+}
+
+function tMessage(delt,mes){
+    setMessage(mes);
+    if( delt != 0){
+        setTimeout( ()=>{
+            if( mes == a3.innerHTML ){
+                setMessage("[ ]");
+            }
+        }, delt);
+    }else{
+        a2.innerHTML= `<span style='color: #00f'> [ C L E A R ] </span>`
+    }
 }
 
 function addLife( n ){
@@ -33,6 +50,7 @@ function timeScore(){
 function initUI(){
     a1 = document.getElementById("score");
     a2 = document.getElementById("life");
+    a3 = document.getElementById("message");
     SCORE_ = 0;
     life_ = MAX_LIFE;
     setInterval( timeScore, 1000);

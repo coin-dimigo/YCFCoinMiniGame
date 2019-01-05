@@ -1,7 +1,8 @@
 {
     "debugMode"     : 1,
     "frameRate"     : 60,
+    "showFPS":false,
     "id"            : "gameCanvas",
     "renderMode"    : 1,
-    "jsList"        : ["game.js"]
+    "jsList"        : ["game.js","keyinput.js","ui.js"]
 }

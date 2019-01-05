@@ -203,11 +203,14 @@ function initGame() {
 
                                 xx = originX;
                                 yy = originY;
+                                let pos = player1.getPosition();
+                                let txpos = Math.round( (pos.x - minX)/BLOCK_WIDTH );
+                                let typos = Math.round( (pos.y - minY)/BLOCK_HEIGHT );
                                 ok_s= true;
                                 switch( Math.floor(Math.random()*100)%2 ){
                                     case 0:
                                     //xx = Math.round(Math.random()*MAX_BLOCK_NUM_X)%(mmab - mmaa ) + mmaa;
-                                    xx = Math.round( (player1.getPosition().x - minX)/BLOCK_WIDTH );
+                                    xx = txpos;
                                     for( let i=MMin(originX, xx); i<=MMax(originX, xx); i++ ){
                                         if( gameMap[i][originY]!=1 )  {
                                             ok_s = false;
@@ -218,7 +221,7 @@ function initGame() {
 
                                     case 1:
                                     // yy = Math.round(Math.random()*MAX_BLOCK_NUM_Y)%(mmbb - mmba ) + mmba;
-                                    yy = Math.round( (player1.getPosition().y - minY)/BLOCK_HEIGHT );
+                                    yy = typos;
                                     for( let i=MMin(originY, yy); i<=MMax(originY, yy); i++ ){
                                         if( gameMap[originX][i]!=1 )  {
                                             ok_s = false;
@@ -231,8 +234,8 @@ function initGame() {
                                     console.log(`[GET] location : [${xx*BLOCK_WIDTH+minX}, ${yy*BLOCK_HEIGHT+minY}]`);
                                     console.log(`from[${originX}, ${originY}] -> to[${xx}, ${yy}] [${ok_s?"true":"false"}] `)
                                     return {
-                                        x: xx*BLOCK_WIDTH+minX,
-                                        y: yy*BLOCK_HEIGHT+minY
+                                        x: xx==txpos? player1.getPosition().x:xx*BLOCK_WIDTH+minX,
+                                        y: yy==typos? player1.getPosition().y:yy*BLOCK_HEIGHT+minY
                                     }
                                 }
                                 
@@ -493,9 +496,11 @@ function initGame() {
                                 console.log("[Crash!]");
                                 addScore( -100 );
                                 addLife( -1 );
+                                tMessage(2000, "[충돌] : score -100")
                                 // 체력 감소?
                                 gameMobs[i].removeFromParent();
                                 delete gameMobs[i];
+                                
                             }
                         }
 
@@ -521,12 +526,14 @@ function initGame() {
 
                             player1.setPosition(size.width / 2, size.height / 2);
                             addScore(-50);
+                            tMessage(1000,"[범위 이탈] : score -50")
                             console.log(`[PLAYER1] move out from map [${XX}, ${YY}]`);
                         }
 
                         
                         if( cc.rectIntersectsRect(rect1, aimObj.getBoundingBox())){
                             alert("[ C L E A R ]");
+                            tMessage(0, "[ C L E A R ]");
                             speedX1=speedX2=speedY1=speedY2=0;
                             keyboards.numLeft = keyboards.numTop = keyboards.numDown = keyboards.numRight = keyboards.W = keyboards.A = keyboards.S = keyboards.D = keyboards.Space = false;
                             player1.setPosition(size.width/2, size.height/2);
@@ -635,7 +642,8 @@ function initGame() {
                                         if( !gameMobs[i]) continue;
                                         if( cc.rectIntersectsRect(rect1, gameMobs[i].getBoundingBox())){
                                             gameMobs[i].removeFromParent();
-                                            addScore(100);
+                                            addScore(80);
+                                            tMessage(1100, "[kill mob] : score +80")
                                             delete gameMobs[i];
                                             console.log(`[delete] mob`);
                                         }
